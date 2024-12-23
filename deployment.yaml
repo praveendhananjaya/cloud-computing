@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-registration
+  labels:
+    app: patient-registration
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-registration
+  template:
+    metadata:
+      labels:
+        app: patient-registration
+    spec:
+      containers:
+      - name: patient-registration
+        image: gcr.io/pure-fold-445308-t2/patient-record:latest
+        ports:
+        - containerPort: 3001
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "/app"
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+
