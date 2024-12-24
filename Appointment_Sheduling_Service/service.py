@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
-from bson.objectid import ObjectId
+from datetime import datetime
 import os
 
 app = Flask(__name__)
@@ -10,172 +10,112 @@ MONGO_URI = os.getenv("MONGO_URI",
                       "mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&appName=HealthSync")
 MONGO_CERT_PATH = os.getenv("MONGO_CERT_PATH", "X509-cert-8433791428290760769.pem")
 DB_NAME = os.getenv("DB_NAME", "MediTrack")
-COLLECTION_NAME = "appointments"
-
-# Ensure the PEM file exists
 if not os.path.exists(MONGO_CERT_PATH):
     raise FileNotFoundError(f"PEM file not found at {MONGO_CERT_PATH}")
 
 client = MongoClient(MONGO_URI, tls=True, tlsCertificateKeyFile=MONGO_CERT_PATH)
 db = client[DB_NAME]
-patients_collection = db[COLLECTION_NAME]
-
-from flask import Flask, request, jsonify
-from pymongo import MongoClient
-from datetime import datetime
-
-app = Flask(__name__)
+doctors_collection = db['doctor']
+appointments_collection = db['appointments']
 
 
-class AppointmentSchedulingService:
-    def __init__(self, mongo_uri='mongodb://localhost:27017/', db_name='appointment_system'):
-        # Initialize the MongoDB client
-        self.client = MongoClient(mongo_uri)
-        self.db = self.client[db_name]
-
-        # Define the collections
-        self.doctors_collection = self.db['doctors']
-        self.appointments_collection = self.db['appointments']
-
-    def add_doctor(self, doctor_id, name, specialty, availability_slots):
-        """Add a new doctor with available time slots"""
-        doctor = {
-            'doctor_id': doctor_id,
-            'name': name,
-            'specialty': specialty,
-            'availability_slots': availability_slots  # List of datetime objects
-        }
-        result = self.doctors_collection.insert_one(doctor)
-        return result.inserted_id
-
-    def get_doctor_availability(self, doctor_id):
-        """Get available time slots for a specific doctor"""
-        doctor = self.doctors_collection.find_one({'doctor_id': doctor_id})
-        if doctor:
-            return doctor['availability_slots']
-        return None
-
-    def book_appointment(self, patient_name, doctor_id, slot):
-        """Book an appointment if the slot is available"""
-        doctor = self.doctors_collection.find_one({'doctor_id': doctor_id})
-        if not doctor:
-            return 'Doctor not found'
-
-        # Check if the requested slot is available
-        if slot in doctor['availability_slots']:
-            # Book the appointment by creating a record in the appointments collection
-            appointment = {
-                'patient_name': patient_name,
-                'doctor_id': doctor_id,
-                'slot': slot,
-                'created_at': datetime.now()
-            }
-            self.appointments_collection.insert_one(appointment)
-
-            # Remove the booked slot from the doctor's availability
-            self.doctors_collection.update_one(
-                {'doctor_id': doctor_id},
-                {'$pull': {'availability_slots': slot}}
-            )
-            return 'Appointment booked successfully'
-        return 'Slot not available'
-
-    def cancel_appointment(self, appointment_id):
-        """Cancel an existing appointment and free the slot"""
-        appointment = self.appointments_collection.find_one({'_id': appointment_id})
-        if not appointment:
-            return 'Appointment not found'
-
-        # Find the doctor and add the slot back to their availability
-        doctor = self.doctors_collection.find_one({'doctor_id': appointment['doctor_id']})
-        if doctor:
-            self.doctors_collection.update_one(
-                {'doctor_id': appointment['doctor_id']},
-                {'$push': {'availability_slots': appointment['slot']}}
-            )
-
-        # Delete the appointment record
-        self.appointments_collection.delete_one({'_id': appointment_id})
-        return 'Appointment canceled successfully'
-
-    def get_appointments(self, patient_name=None):
-        """Get all appointments or filter by patient name"""
-        query = {}
-        if patient_name:
-            query['patient_name'] = patient_name
-
-        appointments = self.appointments_collection.find(query)
-        return list(appointments)
+# Helper function to validate the datetime
+def is_valid_datetime(date_str):
+    try:
+        datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+        return True
+    except ValueError:
+        return False
 
 
-# Instantiate the service
-appointment_service = AppointmentSchedulingService(mongo_uri= MONGO_URI, db_name= DB_NAME)
-
-
-@app.route('/doctors', methods=['POST'])
-def add_doctor():
+# Endpoint to add doctor availability
+@app.route('/doctor/availability', methods=['POST'])
+def add_doctor_availability():
     data = request.get_json()
-    doctor_id = data['doctor_id']
-    name = data['name']
-    specialty = data['specialty']
-    availability_slots = [datetime.strptime(slot, '%Y-%m-%d %H:%M:%S') for slot in data['availability_slots']]
 
-    doctor_id = appointment_service.add_doctor(doctor_id, name, specialty, availability_slots)
-    return jsonify({'message': 'Doctor added successfully', 'doctor_id': doctor_id}), 201
+    doctor_name = data.get('doctor_name')
+    available_slots = data.get('available_slots')  # List of datetime strings in "YYYY-MM-DD HH:MM:SS"
+
+    if not doctor_name or not available_slots:
+        return jsonify({"error": "Missing doctor name or availability slots"}), 400
+
+    # Validate availability slots
+    invalid_slots = [slot for slot in available_slots if not is_valid_datetime(slot)]
+    if invalid_slots:
+        return jsonify({"error": f"Invalid datetime format in slots: {', '.join(invalid_slots)}"}), 400
+
+    doctor_data = {
+        'doctor_name': doctor_name,
+        'available_slots': [datetime.strptime(slot, "%Y-%m-%d %H:%M:%S") for slot in available_slots]
+    }
+
+    # Insert into MongoDB
+    doctors_collection.insert_one(doctor_data)
+
+    return jsonify({"message": f"Availability for {doctor_name} added successfully."}), 201
 
 
-@app.route('/doctors/<int:doctor_id>/availability', methods=['GET'])
-def get_doctor_availability(doctor_id):
-    availability = appointment_service.get_doctor_availability(doctor_id)
-    if availability is None:
-        return jsonify({'message': 'Doctor not found'}), 404
-
-    availability_slots = [slot.strftime('%Y-%m-%d %H:%M:%S') for slot in availability]
-    return jsonify({'availability_slots': availability_slots})
-
-
-@app.route('/appointments', methods=['POST'])
+# Endpoint to book an appointment
+@app.route('/appointment/book', methods=['POST'])
 def book_appointment():
     data = request.get_json()
-    patient_name = data['patient_name']
-    doctor_id = data['doctor_id']
-    slot = datetime.strptime(data['slot'], '%Y-%m-%d %H:%M:%S')
 
-    result = appointment_service.book_appointment(patient_name, doctor_id, slot)
-    if result == 'Appointment booked successfully':
-        return jsonify({'message': result}), 201
-    return jsonify({'message': result}), 400
+    patient_name = data.get('patient_name')
+    doctor_name = data.get('doctor_name')
+    appointment_time = data.get('appointment_time')  # datetime string in "YYYY-MM-DD HH:MM:SS"
+
+    if not patient_name or not doctor_name or not appointment_time:
+        return jsonify({"error": "Missing patient name, doctor name, or appointment time"}), 400
+
+    if not is_valid_datetime(appointment_time):
+        return jsonify({"error": "Invalid datetime format for appointment"}), 400
+
+    appointment_time = datetime.strptime(appointment_time, "%Y-%m-%d %H:%M:%S")
+
+    # Check if the doctor is available
+    doctor = doctors_collection.find_one({"doctor_name": doctor_name})
+
+    if not doctor:
+        return jsonify({"error": "Doctor not found"}), 404
+
+    if appointment_time not in doctor['available_slots']:
+        return jsonify({"error": "Selected time is not available"}), 400
+
+    # Create the appointment
+    appointment = {
+        'patient_name': patient_name,
+        'doctor_name': doctor_name,
+        'appointment_time': appointment_time
+    }
+
+    # Insert into MongoDB
+    appointments_collection.insert_one(appointment)
+
+    # Remove the slot from doctor's availability after booking
+    doctors_collection.update_one(
+        {"doctor_name": doctor_name},
+        {"$pull": {"available_slots": appointment_time}}
+    )
+
+    return jsonify({
+                       "message": f"Appointment booked successfully for {patient_name} with Dr. {doctor_name} at {appointment_time}."}), 201
 
 
-@app.route('/appointments', methods=['GET'])
-def get_appointments():
-    patient_name = request.args.get('patient_name')
-    appointments = appointment_service.get_appointments(patient_name)
+# Endpoint to check available slots for a doctor
+@app.route('/doctor/availability/<doctor_name>', methods=['GET'])
+def get_doctor_availability(doctor_name):
 
-    if not appointments:
-        return jsonify({'message': 'No appointments found'}), 404
+    doctor = doctors_collection.find_one({"doctor_name": doctor_name})
 
-    appointments_data = []
-    for appointment in appointments:
-        appointment_data = {
-            'appointment_id': str(appointment['_id']),
-            'patient_name': appointment['patient_name'],
-            'doctor_id': appointment['doctor_id'],
-            'slot': appointment['slot'].strftime('%Y-%m-%d %H:%M:%S'),
-            'created_at': appointment['created_at'].strftime('%Y-%m-%d %H:%M:%S')
-        }
-        appointments_data.append(appointment_data)
+    if not doctor:
+        return jsonify({"error": "Doctor not found"}), 404
 
-    return jsonify({'appointments': appointments_data})
+    available_slots = [slot.strftime("%Y-%m-%d %H:%M:%S") for slot in doctor['available_slots']]
 
-
-@app.route('/appointments/<appointment_id>', methods=['DELETE'])
-def cancel_appointment(appointment_id):
-    appointment_id = appointment_id.strip()
-    result = appointment_service.cancel_appointment(appointment_id)
-    if result == 'Appointment canceled successfully':
-        return jsonify({'message': result})
-    return jsonify({'message': result}), 400
+    return jsonify({
+        "name": doctor_name,
+        "available_slots": available_slots
+    }), 200
 
 
 if __name__ == '__main__':
