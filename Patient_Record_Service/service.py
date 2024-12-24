@@ -8,7 +8,7 @@ app = Flask(__name__)
 # MongoDB connection setup
 MONGO_URI = os.getenv("MONGO_URI",
                       "mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&appName=HealthSync")
-MONGO_CERT_PATH = os.getenv("MONGO_CERT_PATH", "X509-cert-8433791428290760769.pem")
+MONGO_CERT_PATH = os.getenv("MONGO_CERT_PATH", "../Aggregator Service/X509-cert-8433791428290760769.pem")
 DB_NAME = os.getenv("DB_NAME", "MediTrack")
 COLLECTION_NAME = "patient"
 
