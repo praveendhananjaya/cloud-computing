@@ -1,21 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: patient-registration
+  name: patient-record
   labels:
-    app: patient-registration
+    app: patient-record
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: patient-registration
+      app: patient-record
   template:
     metadata:
       labels:
-        app: patient-registration
+        app: patient-record
     spec:
       containers:
-      - name: patient-registration
+      - name: patient-record
         image: gcr.io/pure-fold-445308-t2/patient-record:latest
         ports:
         - containerPort: 3001
@@ -32,22 +32,22 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Appointment-service
+  name: appointment-service
   labels:
-    app: Appointment-service
+    app: appointment-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Appointment-service
+      app: appointment-service
   template:
     metadata:
       labels:
-        app: Appointment-service
+        app: appointment-service
     spec:
       containers:
-      - name: Appointment-service
-        image: gcr.io/pure-fold-445308-t2/Appointment-service:latest
+      - name: appointment-service
+        image: gcr.io/pure-fold-445308-t2/appointment-service:latest
         ports:
         - containerPort: 3002
         volumeMounts:
@@ -59,27 +59,26 @@ spec:
           secret:
             secretName: mongodb-service-role
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Notification-service
+  name: notification-service
   labels:
-    app: Notification-service
+    app: notification-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Notification-service
+      app: notification-service
   template:
     metadata:
       labels:
-        app: Notification-service
+        app: notification-service
     spec:
       containers:
-      - name: Notification-service
-        image: gcr.io/pure-fold-445308-t2/Notification-service:latest
+      - name: notification-service
+        image: gcr.io/pure-fold-445308-t2/notification-service:latest
         ports:
         - containerPort: 3003
         volumeMounts:
@@ -91,27 +90,26 @@ spec:
           secret:
             secretName: mongodb-service-role
 
-
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: Reporting-service
+  name: reporting-service
   labels:
-    app: Reporting-service
+    app: reporting-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: Reporting-service
+      app: reporting-service
   template:
     metadata:
       labels:
-        app: Reporting-service
+        app: reporting-service
     spec:
       containers:
-      - name: Reporting-service
-        image: gcr.io/pure-fold-445308-t2/Reporting-service:latest
+      - name: reporting-service
+        image: gcr.io/pure-fold-445308-t2/reporting-service:latest
         ports:
         - containerPort: 3004
         volumeMounts:
@@ -122,5 +120,3 @@ spec:
         - name: mongo-cert-volume
           secret:
             secretName: mongodb-service-role
-
-

@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: patient-record
+spec:
+  selector:
+    app: patient-record
+  ports:
+    - protocol: TCP
+      port: 3001
+      targetPort: 3001
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: appointment-service
+spec:
+  selector:
+    app: appointment-service
+  ports:
+    - protocol: TCP
+      port: 3002
+      targetPort: 3002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector:
+    app: notification-service
+  ports:
+    - protocol: TCP
+      port: 3003
+      targetPort: 3003
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reporting-service
+spec:
+  selector:
+    app: reporting-service
+  ports:
+    - protocol: TCP
+      port: 3004
+      targetPort: 3004
