@@ -51,6 +51,7 @@ def add_doctor_availability():
 
     # Insert into MongoDB
     doctors_collection.insert_one(doctor_data)
+    print(doctor_data)
 
     return jsonify({"message": f"Availability for {doctor_name} added successfully."}), 201
 
@@ -104,17 +105,27 @@ def book_appointment():
 # Endpoint to check available slots for a doctor
 @app.route('/doctor/availability/<doctor_name>', methods=['GET'])
 def get_doctor_availability(doctor_name):
+    # Query to find all entries for the doctor
+    doctor_entries = doctors_collection.find({"doctor_name": doctor_name})
 
-    doctor = doctors_collection.find_one({"doctor_name": doctor_name})
-
-    if not doctor:
+    # Check if any documents are found
+    if not doctor_entries:
         return jsonify({"error": "Doctor not found"}), 404
 
-    available_slots = [slot.strftime("%Y-%m-%d %H:%M:%S") for slot in doctor['available_slots']]
+    # Aggregate all available slots from multiple entries
+    all_slots = []
+    for entry in doctor_entries:
+        available_slots = entry.get('available_slots', [])
+        all_slots.extend(available_slots)
+
+    # Remove duplicates and format slots as strings
+    formatted_slots = sorted(
+        {slot.strftime("%Y-%m-%d %H:%M:%S") if isinstance(slot, datetime) else slot for slot in all_slots}
+    )
 
     return jsonify({
         "name": doctor_name,
-        "available_slots": available_slots
+        "available_slots": formatted_slots
     }), 200
 
 

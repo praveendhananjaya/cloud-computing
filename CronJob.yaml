@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: aggregator-job
+spec:
+  schedule: "0 0 * * *"  # Runs daily at midnight
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: aggregator
+            image: gcr.io/pure-fold-445308-t2/aggregator-service:latest
+            command: ["python", "aggregate.py"]  # Run the aggregation script directly
+            envFrom:
+            volumeMounts:
+              - name: mongo-cert-volume
+                mountPath: "/app"
+                readOnly: true
+          volumes:
+            - name: mongo-cert-volume
+              secret:
+                secretName: mongodb-service-role
+

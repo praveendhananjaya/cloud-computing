@@ -25,9 +25,9 @@ patients_collection = db[COLLECTION_NAME]
 def save_patient():
     """Endpoint to save patient data."""
     data = request.get_json()
-
+    # data['date'] = currect.date
     # Validate input data
-    required_fields = ["name", "age", "gender", "address"]
+    required_fields = [ "phone_number", "name", "age", "gender", "medical_details"]
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing required field: {field}"}), 400
@@ -40,16 +40,23 @@ def save_patient():
         return jsonify({"error": str(e)}), 500
 
 
-@app.route("/patients/<id>", methods=["GET"])
-def get_patient(id):
-    """Endpoint to retrieve patient data by ID."""
+@app.route("/patients/<phone_number>", methods=["GET"])
+def get_patient(phone_number):
+    """Endpoint to retrieve all patient records by phone number."""
     try:
-        patient = patients_collection.find_one({"_id": ObjectId(id)})
-        if patient:
-            patient["_id"] = str(patient["_id"])
-            return jsonify(patient), 200
+        # Find all records with the given phone number
+        patients = patients_collection.find({"phone_number": phone_number})
+
+        # Convert the cursor to a list of dictionaries and ensure ObjectId is JSON serializable
+        patient_list = []
+        for patient in patients:
+            patient["_id"] = str(patient["_id"])  # Convert ObjectId to string
+            patient_list.append(patient)
+
+        if patient_list:
+            return jsonify(patient_list), 200
         else:
-            return jsonify({"error": "Patient not found"}), 404
+            return jsonify({"error": "No patients found for the given phone number"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

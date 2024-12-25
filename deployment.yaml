@@ -21,7 +21,102 @@ spec:
         - containerPort: 3001
         volumeMounts:
           - name: mongo-cert-volume
-            mountPath: "/app"
+            mountPath: "."
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Appointment-service
+  labels:
+    app: Appointment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Appointment-service
+  template:
+    metadata:
+      labels:
+        app: Appointment-service
+    spec:
+      containers:
+      - name: Appointment-service
+        image: gcr.io/pure-fold-445308-t2/Appointment-service:latest
+        ports:
+        - containerPort: 3002
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "."
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Notification-service
+  labels:
+    app: Notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Notification-service
+  template:
+    metadata:
+      labels:
+        app: Notification-service
+    spec:
+      containers:
+      - name: Notification-service
+        image: gcr.io/pure-fold-445308-t2/Notification-service:latest
+        ports:
+        - containerPort: 3003
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "."
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: Reporting-service
+  labels:
+    app: Reporting-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: Reporting-service
+  template:
+    metadata:
+      labels:
+        app: Reporting-service
+    spec:
+      containers:
+      - name: Reporting-service
+        image: gcr.io/pure-fold-445308-t2/Reporting-service:latest
+        ports:
+        - containerPort: 3004
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "."
             readOnly: true
       volumes:
         - name: mongo-cert-volume
