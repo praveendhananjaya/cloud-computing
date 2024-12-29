@@ -74,7 +74,7 @@ def book_appointment():
     appointment_time = datetime.strptime(appointment_time, "%Y-%m-%d %H:%M:%S")
 
     # Check if the doctor is available
-    doctor = doctors_collection.find_one({"doctor_name": doctor_name})
+    doctor = doctors_collection.find_one({"doctor_name": doctor_name, "available_slots": appointment_time})
 
     if not doctor:
         return jsonify({"error": "Doctor not found"}), 404
