@@ -43,6 +43,8 @@ jobs:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ secrets.GKE_PROJECT }}
 
+      - name: Set Active Account
+        run: gcloud auth activate-service-account --key-file=${{ secrets.GKE_SA_KEY }}
 
 
       # Authenticate Docker with GKE
@@ -53,7 +55,7 @@ jobs:
       - name: Get GKE Credentials
         env:
           USE_GKE_GCLOUD_AUTH_PLUGIN: "true"
-        run: gcloud container clusters get-credentials "$SI_CLUSTER" --zone "$SI_ZONE" --project ${{ env.PROJECT_ID }}
+        run: gcloud container clusters get-credentials  ${{ env.SI_CLUSTER }} --zone  ${{ env.SI_ZONE }} --project ${{ env.PROJECT_ID }}
 
       # Step 6: Build and Push Docker Image
       - name: Build and Push Docker Image
