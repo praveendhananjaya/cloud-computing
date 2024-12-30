@@ -43,3 +43,20 @@ jobs:
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Patient_Record_Service/Dockerfile Patient_Record_Service/.
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
+
+      # Step 6: Authenticate with Kubernetes Cluster
+      - name: Authenticate Kubernetes
+        run: |
+          gcloud container clusters get-credentials [CLUSTER_NAME] --region [CLUSTER_REGION] --project ${{ env.PROJECT_ID }}
+        env:
+          KUBECONFIG: $HOME/.kube/config
+
+      # Step 7: Apply Kubernetes Deployment
+      - name: Apply Kubernetes Deployment
+        run: |
+          kubectl apply -f deployment.yaml
+
+      # Step 8: Rollout Restart Kubernetes Deployment
+      - name: Rollout Restart Deployment
+        run: |
+          kubectl rollout restart deployment patient-record
