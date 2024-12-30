@@ -43,6 +43,13 @@ jobs:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
           project_id: ${{ env.PROJECT_ID }}
 
+      - name: Authenticate with GCP
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ runner.temp }}/gcp-key.json
+        run: |
+            echo "${{ secrets.GKE_SA_KEY }}" > $GOOGLE_APPLICATION_CREDENTIALS
+            gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+
 
       # Authenticate Docker with GKE
       - name: Configure Docker in GKE
