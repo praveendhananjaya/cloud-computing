@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run
+name: Deploy patient service
 
 env:
   SERVICE_NAME: Patient
@@ -37,7 +37,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f  Patient_Record_Service/.
+          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest  Patient_Record_Service/. 
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
 
 
