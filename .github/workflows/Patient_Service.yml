@@ -19,54 +19,64 @@ jobs:
 
     steps:
       # Step 1: Checkout the repository
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
       # Step 2: Authenticate with Google Cloud
-      - name: Google Cloud Auth
+      - name: Google Cloud Authentication
         uses: google-github-actions/auth@v2
         with:
           credentials_json: '${{ secrets.GCP_SA_KEY }}'
 
       # Step 3: Set up Google Cloud SDK
-      - name: Set up Cloud SDK
+      - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ env.PROJECT_ID }}
 
-      # Step 4: Configure Docker for Artifact Registry
+      # Step 4: Install GKE gcloud auth plugin
+      - name: Install GKE gcloud auth plugin
+        run: |
+          sudo apt-get update && sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin
+
+      # Step 5: Configure Docker for Artifact Registry
       - name: Configure Docker for GCP
         run: gcloud auth configure-docker us-central1-docker.pkg.dev
 
-      # Step 5: Build and Push Docker Image
+      # Step 6: Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Patient_Record_Service/Dockerfile Patient_Record_Service/.
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
 
-      # Step 6: Authenticate Kubernetes
+      # Step 7: Enable GKE Auth Plugin
+      - name: Enable GKE Auth Plugin
+        run: |
+          export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+
+      # Step 8: Authenticate Kubernetes
       - name: Authenticate Kubernetes
         run: |
           gcloud container clusters get-credentials k8s-dev --region us-central1 --project ${{ env.PROJECT_ID }}
         env:
           KUBECONFIG: $HOME/.kube/config
 
-      # Step 7: Verify Kubernetes Context
+      # Step 9: Verify Kubernetes Context
       - name: Verify Kubernetes Context
         run: |
           kubectl config current-context
 
-      # Step 8: Verify Cluster Access
+      # Step 10: Verify Cluster Access
       - name: Verify Cluster Access
         run: |
-          kubectl cluster-info
+          kubectl get pods --all-namespaces
 
-      # Step 9: Apply Kubernetes Deployment
+      # Step 11: Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
           kubectl apply -f deployment.yaml
 
-      # Step 10: Rollout Restart Deployment
+      # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment
         run: |
-          kubectl rollout restart deployment my-deployment
+          kubectl rollout restart deployment patient-service
