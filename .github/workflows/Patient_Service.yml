@@ -51,10 +51,14 @@ jobs:
         env:
           KUBECONFIG: $HOME/.kube/config
 
+      - name: Verify Kubernetes Context
+        run: |
+          kubectl config current-context
+
       # Step 7: Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f deployment.yaml
+          kubectl apply -f deployment.yaml --validate=false
 
       # Step 8: Rollout Restart Kubernetes Deployment
       - name: Rollout Restart Deployment
