@@ -53,7 +53,7 @@ jobs:
       - name: Get GKE Credentials
         env:
           USE_GKE_GCLOUD_AUTH_PLUGIN: "true"
-        run: gcloud container clusters get-credentials "$SI_CLUSTER" --zone "$SI_ZONE"
+        run: gcloud container clusters get-credentials "$SI_CLUSTER" --zone "$SI_ZONE" --project ${{ env.PROJECT_ID }}
 
       # Step 6: Build and Push Docker Image
       - name: Build and Push Docker Image
