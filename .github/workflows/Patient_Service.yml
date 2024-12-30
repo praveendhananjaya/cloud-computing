@@ -3,7 +3,7 @@ name: Deploy patient service
 env:
   SERVICE_NAME: Patient
   PROJECT_ID: pure-fold-445308-t2
-  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/pure-fold-445308-t2/patient-registration
+  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/pure-fold-445308-t2/patient-record
 
 on:
   push:
