@@ -40,14 +40,10 @@ jobs:
         env:
             ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
-
-      # Step 3: Set up Google Cloud SDK
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ env.PROJECT_ID }}
+          project_id: ${{ secrets.GKE_PROJECT }}
+
+
 
       # Authenticate Docker with GKE
       - name: Configure Docker in GKE
