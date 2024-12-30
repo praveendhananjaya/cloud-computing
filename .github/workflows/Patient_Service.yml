@@ -47,7 +47,7 @@ jobs:
       # Step 6: Authenticate with Kubernetes Cluster
       - name: Authenticate Kubernetes
         run: |
-          gcloud container clusters get-credentials [CLUSTER_NAME] --region [CLUSTER_REGION] --project ${{ env.PROJECT_ID }}
+          gcloud container clusters get-credentials k8s-dev --region us-central1 --project ${{ env.PROJECT_ID }}
         env:
           KUBECONFIG: $HOME/.kube/config
 
