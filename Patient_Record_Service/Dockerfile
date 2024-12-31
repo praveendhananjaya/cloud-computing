@@ -10,7 +10,7 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Make sure the PEM certificate file is available in the container
+# Make sure the PEM certificate file is available in the containe
 # Copy the certificate file into the container
 # COPY X509-cert-8433791428290760769.pem X509-cert-8433791428290760769.pem
 

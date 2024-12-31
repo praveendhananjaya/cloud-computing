@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
       - name: appointment-service
-        image: pure-fold-445308-t2/appointment-service/appointment-service:latest
+        image: gcr.io/pure-fold-445308-t2/appointment-service/appointment-service:latest
         ports:
         - containerPort: 3002
         volumeMounts:
