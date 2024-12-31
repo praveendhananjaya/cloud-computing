@@ -1,4 +1,4 @@
-name: Appointment_Sheduling_Service
+name: Deploy Appointment Sheduling Service
 
 env:
   SERVICE_NAME: Appointment_Sheduling_Service
