@@ -12,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - Appointment_Sheduling_Service
+      - Appointment_Sheduling_Service/**
   pull_request:
     branches:
       - main
     paths:
-      - Appointment_Sheduling_Service
+      - Appointment_Sheduling_Service/**
 
 jobs:
   dockerize-and-deploy:

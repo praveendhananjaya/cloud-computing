@@ -12,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - Patient_Record_Service
+      - Patient_Record_Service/**
   pull_request:
     branches:
       - main
     paths:
-      - Patient_Record_Service
+      - Patient_Record_Service/**
 
 jobs:
   dockerize-and-deploy:
