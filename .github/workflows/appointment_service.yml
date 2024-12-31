@@ -1,9 +1,9 @@
-name: Deploy Patient Service
+name: Appointment_Sheduling_Service
 
 env:
-  SERVICE_NAME: Patient
+  SERVICE_NAME: Appointment_Sheduling_Service
   PROJECT_ID: pure-fold-445308-t2
-  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/pure-fold-445308-t2/patient-record/patient-service
+  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/pure-fold-445308-t2/appointment-service/appointment-service
   SI_CLUSTER: k8s-dev
   SI_ZONE: us-central1
 
@@ -12,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - Patient_Record_Service
+      - Appointment_Sheduling_Service
   pull_request:
     branches:
       - main
     paths:
-      - Patient_Record_Service
+      - Appointment_Sheduling_Service
 
 jobs:
   dockerize-and-deploy:
@@ -80,7 +80,7 @@ jobs:
       # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment
         run: |
-          kubectl rollout restart deployment patient-record
+          kubectl rollout restart appointment-service
           kubectl get services -o wide
           
             

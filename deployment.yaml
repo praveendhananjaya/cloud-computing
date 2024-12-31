@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: patient-record
-        image: gcr.io/pure-fold-445308-t2/patient-record:latest
+        image: gcr.io/pure-fold-445308-t2/patient-record/patient-service:latest
         ports:
         - containerPort: 3001
         volumeMounts:
@@ -47,7 +47,7 @@ spec:
     spec:
       containers:
       - name: appointment-service
-        image: gcr.io/pure-fold-445308-t2/appointment-service:latest
+        image: pure-fold-445308-t2/appointment-service/appointment-service:latest
         ports:
         - containerPort: 3002
         volumeMounts:
