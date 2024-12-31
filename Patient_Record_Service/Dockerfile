@@ -22,6 +22,5 @@ ENV MONGO_URI="mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24externa
 ENV MONGO_CERT_PATH="/app/X509-cert-8433791428290760769.pem"
 ENV DB_NAME="MediTrack"
 
-
 # Define the command to run the application
 CMD ["python", "service.py"]
