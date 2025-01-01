@@ -20,7 +20,7 @@ EXPOSE 5000
 
 # Set environment variables for MongoDB connection
 ENV MONGO_URI="mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&appName=HealthSync"
-ENV MONGO_CERT_PATH="/app/X509-cert-8433791428290760769.pem"
+ENV MONGO_CERT_PATH="/secrete/X509-cert-8433791428290760769.pem"
 ENV DB_NAME="MediTrack"
 
 # Define the command to run the application
