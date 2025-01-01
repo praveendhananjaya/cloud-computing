@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: patient-record
+  name: appointment-service
 spec:
   selector:
-    app: patient-record
+    app: appointment-service
   ports:
     - protocol: TCP
       port: 5001
