@@ -3,7 +3,7 @@ name: Deploy Appointment Sheduling Service
 env:
   SERVICE_NAME: Appointment_Sheduling_Service
   PROJECT_ID: pure-fold-445308-t2
-  DOCKER_IMAGE_URL: us-central1-docker.pkg.dev/pure-fold-445308-t2/appointment-service/appointment-service
+  DOCKER_IMAGE_URL: gcr.io/pure-fold-445308-t2/appointment-service
   SI_CLUSTER: k8s-dev
   SI_ZONE: us-central1
 

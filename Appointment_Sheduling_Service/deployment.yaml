@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: appointment-service
+  labels:
+    app: appointment-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: appointment-service
+  template:
+    metadata:
+      labels:
+        app: appointment-service
+    spec:
+      containers:
+      - name: patient-record
+        image: gcr.io/pure-fold-445308-t2/appointment-service:latest
+        ports:
+        - containerPort: 5001
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "secrete/"
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+

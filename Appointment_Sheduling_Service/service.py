@@ -8,7 +8,7 @@ app = Flask(__name__)
 # MongoDB connection setup
 MONGO_URI = os.getenv("MONGO_URI",
                       "mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&appName=HealthSync")
-MONGO_CERT_PATH = os.getenv("MONGO_CERT_PATH", "X509-cert-8433791428290760769.pem")
+MONGO_CERT_PATH = os.getenv("MONGO_CERT_PATH", "secrete/X509-cert-8433791428290760769.pem")
 DB_NAME = os.getenv("DB_NAME", "MediTrack")
 if not os.path.exists(MONGO_CERT_PATH):
     raise FileNotFoundError(f"PEM file not found at {MONGO_CERT_PATH}")
@@ -130,4 +130,4 @@ def get_doctor_availability(doctor_name):
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
+    app.run(host="0.0.0.0", port=5001)
