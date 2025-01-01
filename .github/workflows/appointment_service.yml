@@ -57,7 +57,7 @@ jobs:
 
       # Authenticate Docker with GKE
       - name: Configure Docker in GKE
-        run: gcloud --quiet auth configure-docker 
+        run: gcloud --quiet auth configure-docker
 
       # Get credentials for GKE cluster
       - name: Get GKE Credentials
@@ -74,8 +74,8 @@ jobs:
       # Step 11: Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+          kubectl apply -f Appointment_Sheduling_Service/deployment.yaml
+          kubectl apply -f Appointment_Sheduling_Service/service.yaml
 
       # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment
