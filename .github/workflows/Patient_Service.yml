@@ -57,7 +57,7 @@ jobs:
 
       # Authenticate Docker with GKE
       - name: Configure Docker in GKE
-        run: gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
+        run: gcloud --quiet auth configure-docker
 
       # Get credentials for GKE cluster
       - name: Get GKE Credentials
