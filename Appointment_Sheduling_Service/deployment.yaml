@@ -8,7 +8,7 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app:
+      app: appointment-service  # Match the label with the app: appointment-service
   template:
     metadata:
       labels:
@@ -27,5 +27,3 @@ spec:
         - name: mongo-cert-volume
           secret:
             secretName: mongodb-service-role
-
-
