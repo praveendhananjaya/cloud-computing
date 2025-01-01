@@ -68,7 +68,7 @@ jobs:
       # Step 6: Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Patient_Record_Service/Dockerfile Patient_Record_Service/.
+          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Appointment_Sheduling_Service/Dockerfile Appointment_Sheduling_Service/.
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
 
       # Step 11: Apply Kubernetes Deployment
