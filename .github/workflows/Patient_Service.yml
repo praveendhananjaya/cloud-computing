@@ -74,8 +74,8 @@ jobs:
       # Step 11: Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f deployment.yaml
-          kubectl apply -f service.yaml
+          kubectl apply -f Patient_Record_Service/deployment.yaml
+          kubectl apply -f Patient_Record_Service/service.yaml
 
       # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment

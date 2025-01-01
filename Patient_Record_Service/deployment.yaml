@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: patient-record
+  labels:
+    app: patient-record
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: patient-record
+  template:
+    metadata:
+      labels:
+        app: patient-record
+    spec:
+      containers:
+      - name: patient-record
+        image: us-central1-docker.pkg.dev/pure-fold-445308-t2/patient-record/patient-service:latest
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+          - name: mongo-cert-volume
+            mountPath: "."
+            readOnly: true
+      volumes:
+        - name: mongo-cert-volume
+          secret:
+            secretName: mongodb-service-role
+
+
