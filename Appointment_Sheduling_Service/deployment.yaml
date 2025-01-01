@@ -15,7 +15,7 @@ spec:
         app: appointment-service
     spec:
       containers:
-      - name: patient-record
+      - name: appointment-service
         image: gcr.io/pure-fold-445308-t2/appointment-service:latest
         ports:
         - containerPort: 5001
