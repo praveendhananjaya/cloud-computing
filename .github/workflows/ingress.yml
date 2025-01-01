@@ -1,0 +1,78 @@
+name: Deploy Ingress
+
+env:
+  SERVICE_NAME: Patient
+  PROJECT_ID: pure-fold-445308-t2
+  DOCKER_IMAGE_URL: gcr.io/pure-fold-445308-t2/patient-record
+  SI_CLUSTER: k8s-dev
+  SI_ZONE: us-central1
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  dockerize-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      # Install required dependencies
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y apt-transport-https ca-certificates curl
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+          curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+          sudo apt-get update
+          sudo apt-get install -y google-cloud-sdk-gke-gcloud-auth-plugin kubectl
+
+
+      - name: Google Cloud Auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+          project_id: ${{ env.PROJECT_ID }}
+
+      # Set up Google Cloud CLI
+      - name: Setup Google Cloud CLI
+        uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.3
+        env:
+            ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        with:
+          service_account_key: '${{ secrets.GKE_SA_KEY }}'
+          project_id: ${{ env.PROJECT_ID }}
+
+
+      # Authenticate Docker with GKE
+      - name: Configure Docker in GKE
+        run: gcloud --quiet auth configure-docker
+
+      # Get credentials for GKE cluster
+      - name: Get GKE Credentials
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "true"
+        run: gcloud container clusters get-credentials  ${{ env.SI_CLUSTER }} --zone  ${{ env.SI_ZONE }} --project ${{ env.PROJECT_ID }}
+
+
+      # Step 11: Apply Kubernetes Ingress
+      - name: Apply Kubernetes Deployment
+        run: |
+          kubectl apply -f Ingress.yaml
+
+      # Step 12: Rollout Restart Deployment
+      - name: Rollout Restart Deployment
+        run: |
+          kubectl rollout restart deployment all
+          kubectl get services -o wide
+          
+            

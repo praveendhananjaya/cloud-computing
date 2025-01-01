@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+  namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /notifications    # Path for notification service
+        pathType: Prefix
+        backend:
+          service:
+            name: notification-service  # Service name for notifications
+            port:
+              number: 80         # Port of the notification service
+      - path: /appointments    # Path for appointment service
+        pathType: Prefix
+        backend:
+          service:
+            name: appointment-service  # Service name for appointments
+            port:
+              number: 80         # Port of the appointment service
+      - path: /patient-records    # Path for patient record service
+        pathType: Prefix
+        backend:
+          service:
+            name: patient-record   # Service name for patient records
+            port:
+              number: 80         # Port of the patient record service

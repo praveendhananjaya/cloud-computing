@@ -18,7 +18,7 @@ spec:
       - name: patient-record
         image: gcr.io/pure-fold-445308-t2/patient-record:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 80
         volumeMounts:
           - name: mongo-cert-volume
             mountPath: "secrete/"

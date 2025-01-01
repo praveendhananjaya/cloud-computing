@@ -15,7 +15,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the certificate file into the container
 
 # Expose the port that the Flask app will run on
-EXPOSE 5000
+EXPOSE 80
 
 # Set environment variables for MongoDB connection
 ENV MONGO_URI="mongodb+srv://healthsync.qntlu.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority&appName=HealthSync"
