@@ -21,7 +21,7 @@ spec:
         - containerPort: 5000
         volumeMounts:
           - name: mongo-cert-volume
-            mountPath: "."
+            mountPath: "app"
             readOnly: true
       volumes:
         - name: mongo-cert-volume
