@@ -9,7 +9,7 @@ COPY . /app
 
 
 # Expose the port that the Flask app will run on
-EXPOSE 5000
+EXPOSE 5002
 
 
 # Define the command to run the application

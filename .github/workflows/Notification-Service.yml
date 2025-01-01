@@ -1,9 +1,9 @@
-name: Deploy Appointment Sheduling Service
+name: Deploy notification-service
 
 env:
-  SERVICE_NAME: Appointment_Sheduling_Service
+  SERVICE_NAME: notification-service
   PROJECT_ID: pure-fold-445308-t2
-  DOCKER_IMAGE_URL: gcr.io/pure-fold-445308-t2/appointment-service
+  DOCKER_IMAGE_URL: gcr.io/pure-fold-445308-t2/notification-service
   SI_CLUSTER: k8s-dev
   SI_ZONE: us-central1
 
@@ -12,12 +12,12 @@ on:
     branches:
       - main
     paths:
-      - Appointment_Sheduling_Service/**
+      - NotificationService**
   pull_request:
     branches:
       - main
     paths:
-      - Appointment_Sheduling_Service/**
+      - NotificationService/**
 
 jobs:
   dockerize-and-deploy:
@@ -68,19 +68,19 @@ jobs:
       # Step 6: Build and Push Docker Image
       - name: Build and Push Docker Image
         run: |
-          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f Appointment_Sheduling_Service/Dockerfile Appointment_Sheduling_Service/.
+          docker build -t ${{ env.DOCKER_IMAGE_URL }}:latest -f NotificationService/Dockerfile NotificationService/.
           docker push ${{ env.DOCKER_IMAGE_URL }}:latest
 
       # Step 11: Apply Kubernetes Deployment
       - name: Apply Kubernetes Deployment
         run: |
-          kubectl apply -f Appointment_Sheduling_Service/deployment.yaml
-          kubectl apply -f Appointment_Sheduling_Service/service.yaml
+          kubectl apply -f NotificationService/deployment.yaml
+          kubectl apply -f NotificationService/service.yaml
 
       # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment
         run: |
-          kubectl rollout restart deployment appointment-service
+          kubectl rollout restart deployment notification-service
           kubectl get services -o wide
           
             
