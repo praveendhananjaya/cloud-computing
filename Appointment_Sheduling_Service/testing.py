@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 from service import app, is_valid_datetime
 
+
 class TestApp(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
