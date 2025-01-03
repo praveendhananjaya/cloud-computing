@@ -20,6 +20,9 @@ client = MongoClient(MONGO_URI, tls=True, tlsCertificateKeyFile=MONGO_CERT_PATH)
 db = client[DB_NAME]
 patients_collection = db[COLLECTION_NAME]
 
+@app.route('/appointments/healthz', methods=['GET'])
+def health_check():
+    return 'OK', 200
 
 @app.route("/patients", methods=["POST"])
 def save_patient():

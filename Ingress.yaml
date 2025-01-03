@@ -1,21 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: my-ingress
+  name: medi-track-ingress
   namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    kubernetes.io/ingress.class: "gce"  # GCP Ingress controller
+    ingress.gcp.kubernetes.io/health-check-path: "/healthz"
+    ingress.gcp.kubernetes.io/backends-config: '{"default": {"protocol": "HTTP"}}'
 spec:
   rules:
   - http:
       paths:
-      - path: /notifications    # Path for notification service
-        pathType: Prefix
-        backend:
-          service:
-            name: notification-service  # Service name for notifications
-            port:
-              number: 80         # Port of the notification service
       - path: /appointments    # Path for appointment service
         pathType: Prefix
         backend:

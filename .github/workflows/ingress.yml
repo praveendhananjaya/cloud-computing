@@ -72,7 +72,6 @@ jobs:
       # Step 12: Rollout Restart Deployment
       - name: Rollout Restart Deployment
         run: |
-          kubectl rollout restart deployment --all
           kubectl get services -o wide
           
             

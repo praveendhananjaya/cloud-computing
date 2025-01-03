@@ -28,6 +28,10 @@ def is_valid_datetime(date_str):
         return False
 
 
+@app.route('/appointments/healthz', methods=['GET'])
+def health_check():
+    return 'OK', 200
+
 # Endpoint to add doctor availability
 @app.route('/doctor/availability', methods=['POST'])
 def add_doctor_availability():
