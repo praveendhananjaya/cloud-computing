@@ -3,11 +3,13 @@ kind: Ingress
 metadata:
   name: medi-track-ingress
   namespace: default
-  annotations:
-    kubernetes.io/ingress.class: "gce"  # GCP Ingress controller
-    ingress.gcp.kubernetes.io/health-check-path: "/healthz"
-    ingress.gcp.kubernetes.io/backends-config: '{"default": {"protocol": "HTTP"}}'
 spec:
+  defaultBackend:
+    service:
+      name: patient-record
+      port:
+        number: 80
+
   rules:
   - http:
       paths:

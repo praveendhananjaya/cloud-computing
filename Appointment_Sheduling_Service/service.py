@@ -27,8 +27,11 @@ def is_valid_datetime(date_str):
     except ValueError:
         return False
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return 'OK', 200
 
-@app.route('/appointments/healthz', methods=['GET'])
+@app.route('/healthz', methods=['GET'])
 def health_check():
     return 'OK', 200
 
