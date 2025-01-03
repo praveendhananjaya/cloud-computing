@@ -3,6 +3,8 @@ kind: Ingress
 metadata:
   name: medi-track-ingress
   namespace: default
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /  # Strips /patient-records prefix
 spec:
   defaultBackend:
     service:
@@ -13,14 +15,14 @@ spec:
   rules:
   - http:
       paths:
-      - path: /appointments    # Path for appointment service
+      - path: /appointment    # Path for appointment service
         pathType: Prefix
         backend:
           service:
             name: appointment-service  # Service name for appointments
             port:
               number: 80         # Port of the appointment service
-      - path: /patient-records    # Path for patient record service
+      - path: /patient-record    # Path for patient record service
         pathType: Prefix
         backend:
           service:

@@ -27,7 +27,7 @@ def is_valid_datetime(date_str):
     except ValueError:
         return False
 
-@app.route('/', methods=['GET'])
+@app.route('/appointment', methods=['GET'])
 def homepage():
     return 'OK', 200
 
