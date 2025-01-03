@@ -29,4 +29,4 @@ spec:
           service:
             name: patient-record   # Service name for patient records
             port:
-              number: 80         # Port of the patient record service
+              number: 80         # Port of the patient record services
