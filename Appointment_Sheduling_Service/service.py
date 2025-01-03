@@ -28,7 +28,7 @@ def is_valid_datetime(date_str):
         return False
 
 @app.route('/', methods=['GET'])
-def health_check():
+def homepage():
     return 'OK', 200
 
 @app.route('/healthz', methods=['GET'])

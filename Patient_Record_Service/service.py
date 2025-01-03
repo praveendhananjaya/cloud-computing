@@ -21,7 +21,7 @@ db = client[DB_NAME]
 patients_collection = db[COLLECTION_NAME]
 
 @app.route('/', methods=['GET'])
-def health_check():
+def homepage():
     return 'OK', 200
 
 @app.route('/healthz', methods=['GET'])
